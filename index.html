@@ -1,0 +1,172 @@
+<DOCTIPE html>
+<html>
+<head>
+<style>
+    canvas {
+      border: 1px solid black;
+width: 100%;
+        height: 100%;
+    }
+#quiz-container {
+  text-align: center;
+}
+
+#quiz-header {
+  font-size: 2em;
+  margin-bottom: 1em;
+}
+
+#quiz-timer {
+  font-size: 1.5em;
+  margin-bottom: 1em;
+}
+
+#quiz-question {
+  font-size: 1.5em;
+  margin-bottom: 1em;
+}
+
+form {
+  margin-bottom: 1em;
+}
+
+#quiz-answer {
+  font-size: 1.5em;
+  padding: 0.5em;
+}
+
+button[type="submit"] {
+  font-size: 1.5em;
+  padding: 0.5em 1em;
+}
+
+#quiz-result {
+  font-size: 1.5em;
+  margin-bottom: 1em;
+}
+
+#start-button {
+  font-size: 1.5em;
+  padding: 0.5em 1em;
+}
+
+</style>
+<script>
+const canvas = document.getElementById("canvas");
+    let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
+    let context = canvas.getContext("2d");
+    
+    // Set the canvas size to match the window size
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    // Listen for window resize event
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+    
+    // Listen for mouse events on the canvas
+    canvas.addEventListener("mousedown", (event) => {
+      isDrawing = true;
+      lastX = event.clientX;
+      lastY = event.clientY;
+    });
+    canvas.addEventListener("mouseup", () => isDrawing = false);
+    canvas.addEventListener("mouseout", () => isDrawing = false);
+    canvas.addEventListener("mousemove", (event) => {
+      if (!isDrawing) return;
+      context.beginPath();
+      context.moveTo(lastX, lastY);
+      context.lineTo(event.clientX, event.clientY);
+      context.stroke();
+      lastX = event.clientX;
+      lastY = event.clientY;
+    });
+const quizContainer = document.getElementById("quiz");
+const quizResult = document.getElementById("result");
+const quizTimer = document.getElementById("timer");
+const startButton = document.getElementById("start-button");
+const answerInput = document.getElementById("answer");
+
+const questions = [
+  {
+    question: "What is 2 + 2?",
+    answer: "4"
+  },
+  {
+    question: "What is the capital of France?",
+    answer: "Paris"
+  },
+  {
+    question: "What is the largest planet in our solar system?",
+    answer: "Jupiter"
+  },
+  ...以下に、25問分の質問と回答を追加
+];
+
+let currentQuestion = 0;
+let timerInterval = null;
+let correctAnswers = 0;
+
+function showQuestion() {
+  const question = questions[currentQuestion].question;
+  quizContainer.textContent = `問題： ${question}`;
+  answerInput.value = "";
+}
+
+function checkAnswer() {
+  const answer = answerInput.value;
+  if (answer === questions[currentQuestion].answer) {
+    quizResult.textContent = "正解！";
+    correctAnswers++;
+  } else {
+    quizResult.textContent = "不正解。もう一度解いてください。";
+  }
+
+  currentQuestion++;
+  if (currentQuestion === questions.length) {
+    clearInterval(timerInterval);
+    quizResult.textContent = `全ての問題が終了しました！正解数：${correctAnswers}/${questions.length}`;
+    quizTimer.textContent = "タイマー: 0秒";
+    return;
+  }
+  showQuestion();
+}
+
+function startQuiz() {
+  correctAnswers = 0;
+  currentQuestion = 0;
+  showQuestion();
+  let timer = 0;
+  timerInterval = setInterval(() => {
+    timer++;
+    quizTimer.textContent = `タイマー: ${timer}秒`;
+  }, 1000);
+}
+
+startButton.addEventListener("click", startQuiz);
+quizContainer.addEventListener("submit", (event) => {
+  event.preventDefault();
+  checkAnswer();
+});
+
+</script>
+</head>
+<body>
+<div id="quiz-container">
+  <h1 id="quiz-header">自由解答式のクイズ</h1>
+  <p id="quiz-timer"></p>
+  <div id="quiz-question"></div>
+  <form>
+    <input type="text" id="quiz-answer" />
+    <button type="submit">送信</button>
+  </form>
+  <p id="quiz-result"></p>
+  <button id="start-button">スタート</button>
+</div>
+  <canvas id="canvas"></canvas>
+</body>
+<html>
