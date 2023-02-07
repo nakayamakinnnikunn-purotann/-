@@ -1,0 +1,75 @@
+<html>
+  <head>
+    <style>
+      .center {
+        text-align: center;
+      }
+
+      .question {
+        display: none;
+      }
+    </style>
+  </head>
+  <body class="center">
+    <h1>Quiz Time Attack</h1>
+    <p>Enter the time limit in seconds:</p>
+    <input id="time-input" type="number">
+    <button id="start-button">Start</button>
+    <div id="quiz">
+      <div class="question">
+        <p>Question 1</p>
+        <input class="answer-box">
+      </div>
+      <div class="question">
+        <p>Question 2</p>
+        <input class="answer-box">
+      </div>
+      <!-- Add more questions here -->
+    </div>
+    <div id="result" style="display: none;"></div>
+  </body>
+  <script>
+    const questions = document.querySelectorAll(".question");
+    const startButton = document.querySelector("#start-button");
+    const resultContainer = document.querySelector("#result");
+    const timeInput = document.querySelector("#time-input");
+    const quizContainer = document.querySelector("#quiz");
+
+    let currentQuestion = 0;
+    let correctAnswers = 0;
+    let timeLimit;
+    let timerInterval;
+
+    startButton.addEventListener("click", function() {
+      timeLimit = timeInput.value;
+      startQuiz();
+    });
+
+    function startQuiz() {
+      startButton.style.display = "none";
+      timeInput.style.display = "none";
+      quizContainer.style.display = "block";
+      questions[currentQuestion].style.display = "block";
+      startTimer();
+    }
+
+    function startTimer() {
+      let timeLeft = timeLimit;
+
+      timerInterval = setInterval(function() {
+        timeLeft--;
+
+        if (timeLeft === 0) {
+          clearInterval(timerInterval);
+          displayResult();
+        }
+      }, 1000);
+    }
+
+    function displayResult() {
+      quizContainer.style.display = "none";
+      resultContainer.style.display = "block";
+      resultContainer.innerHTML = `You got ${correctAnswers} out of ${questions.length} questions correct in ${timeLimit} seconds.`;
+    }
+  </script>
+</html>
